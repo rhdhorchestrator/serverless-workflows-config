@@ -47,11 +47,15 @@ PROJECT_ID=$(curl -X POST "${MOVE2KUBE_URL}/api/v1/workspaces/${WORKSPACE_ID}/pr
 
 echo "Wait until M2K workflow is available in backstage..."
 M2K_STATUS=$(curl -XGET -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer ${BACKEND_SECRET}" ${BACKSTAGE_URL}/api/orchestrator/v2/workflows/m2k/overview)
-until [ "$M2K_STATUS" -eq 200 ]
-do
-sleep 5
-M2K_STATUS=$(curl -XGET -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer ${BACKEND_SECRET}" ${BACKSTAGE_URL}/api/orchestrator/v2/workflows/m2k/overview)
+retries=20
+while [ ${retries} -gt 0 ] && [ "${M2K_STATUS}" -ne 200 ]; do
+  echo "Wait until workflow is available"
+  kubectl get pods -l app="m2k" -A
+  sleep 5
+  retries=$((retries-1))
+  M2K_STATUS=$(curl -XGET -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer ${BACKEND_SECRET}" ${BACKSTAGE_URL}/api/orchestrator/v2/workflows/m2k/overview)
 done
+
 
 echo "M2K is available in backstage, sending execution request"
 out=$(curl -XPOST -H "Content-Type: application/json" -H "Authorization: Bearer ${BACKEND_SECRET}" \
