@@ -20,22 +20,27 @@ jobs:
         uses: helm/kind-action@v1.10.0
         with:
           cluster_name: kind
-      - name: Create sonataflow-infra namespace
-        run: |
-          # Needs to knative events resources in this namespace as the broker url is hard coded at the moment
-          kubectl create ns sonataflow-infra
 
       - name: Deploy sonataflow-operator
         run: |
           helm repo add orchestrator https://rhdhorchestrator.github.io/orchestrator-helm-chart
-          helm install orchestrator orchestrator/orchestrator-k8s --set platform.eventing.broker.name=""
+          helm install orchestrator orchestrator/orchestrator-k8s --set platform.eventing.broker.name="broker" --set platform.eventing.broker.namespace="default"
 
 
           kubectl get sfp -A
           kubectl wait --for=condition=Ready=true pods -l "app.kubernetes.io/name=backstage" --timeout=10m
           kubectl get pods -o wide
           kubectl wait --for=condition=Ready=true pods -l "app=sonataflow-platform" --timeout=180s
-
+      - name: Create in-memory broker
+        run: |
+          echo "apiVersion: eventing.knative.dev/v1
+          kind: Broker
+          metadata:
+            name: broker" | kubectl apply -f -
+          kubectl get broker
+          kubectl -n sonataflow-operator-system rollout restart deploy sonataflow-operator-controller-manager
+          kubectl get pods -o wide
+          kubectl wait --for=condition=Ready=true pods -l "app=sonataflow-platform" --timeout=180s
       - name: Deploy Move2kube serverless workflow and its components
         env:
           SSH_PUB_KEY: ${{secrets.SSH_PUB_KEY}}
@@ -65,7 +70,7 @@ jobs:
             }
           )" charts/move2kube/templates/0?-sonataflow_m2k.yaml
 
-          K8S_INSTALL=1 M2K_HELM_REPO=charts/move2kube/. PRIV_ID_RSA_PATH=id_rsa PUB_ID_RSA_PATH=id_rsa.pub M2K_HELM_REPO=charts/move2kube/ TARGET_NS=default ./docs/main/move2kube/install_m2k.sh
+          K8S_INSTALL=1 BROKER_NAME=broker M2K_HELM_REPO=charts/move2kube/. PRIV_ID_RSA_PATH=id_rsa PUB_ID_RSA_PATH=id_rsa.pub M2K_HELM_REPO=charts/move2kube/ TARGET_NS=default ./docs/main/move2kube/install_m2k.sh
 
       - name: Run e2e script
         run: |
