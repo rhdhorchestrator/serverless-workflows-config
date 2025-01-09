@@ -255,6 +255,8 @@ spec:
         completionType: allOf
         end:
           terminate: true
+        metadata:
+          errorMessage: '"Move2kube (m2k) workflow: " + $WORKFLOW.instanceId + " has finalized with error. Exit message: " + .exitMessage + " -- Plan retries: " + (.planRetries|tostring)'
         name: PrintExitErrorMessage
         numCompleted: 0
         type: parallel
@@ -303,7 +305,7 @@ spec:
   podTemplate:
     container:
       resources: {}
-      image: quay.io/orchestrator/serverless-workflow-move2kube:2e63e6eb10a518a3390ede2ad27ebc5545692891
+      image: quay.io/orchestrator/serverless-workflow-move2kube:2952ec17f7b7b4b10d562d223105d94db397549e
       envFrom:
         - secretRef:
             name: m2k-creds
