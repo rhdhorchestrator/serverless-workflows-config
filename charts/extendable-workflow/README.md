@@ -1,1 +1,0 @@
-See [documentation for the workflow](../../docs/main/extendable-workflow/README.md)
