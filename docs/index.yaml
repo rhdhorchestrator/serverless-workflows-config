@@ -1206,6 +1206,17 @@ entries:
     version: 1.4.0-rc2
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2025-01-16T15:52:11.606965108Z"
+    description: 'A Helm chart to deploy the move2kube workflow. '
+    digest: 732101dcb923159f5d9897188a3f22b7962262bfca50570e927fe0a4cab2ce80
+    icon: https://raw.githubusercontent.com/rhdhorchestrator/rhdhorchestrator.github.io/main/assets/images/WO_black.svg
+    name: move2kube
+    type: application
+    urls:
+    - https://github.com/rhdhorchestrator/serverless-workflows-config/releases/download/move2kube-1.4.0-rc2/move2kube-1.4.0-rc2.tgz
+    version: 1.4.0-rc2
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2024-12-18T10:17:05.872981974Z"
     description: 'A Helm chart to deploy the move2kube workflow. '
     digest: 7bfdca834d6c27b56177cad592ff05babef4e443d83467084710db71a1d3ad16
@@ -4287,4 +4298,4 @@ entries:
     urls:
     - https://github.com/rgolangh/serverless-workflows-config/releases/download/workflows-0.1.0/workflows-0.1.0.tgz
     version: 0.1.0
-generated: "2025-01-16T07:58:40.150568556Z"
+generated: "2025-01-16T15:52:11.608230925Z"
