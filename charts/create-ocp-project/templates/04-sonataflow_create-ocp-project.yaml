@@ -42,13 +42,13 @@ spec:
         operation: sysout
         type: custom
       - name: successResult
-        operation: '{ "result": { "completedWith":"success", "message": "Project " + .projectName + " active", "outputs":[] } }'
+        operation: '{ "result": { "message": "Project " + .projectName + " active", "outputs":[] } }'
         type: expression
       - name: errorProjectNotActiveResult
-        operation: '{ "result": { "completedWith":"error", "message": "Project " + .projectName + " not active" } }'
+        operation: '{ "result": { "message": "Project " + .projectName + " not active" } }'
         type: expression
       - name: errorAuthorizationDeniedResult
-        operation: '{ "result": { "completedWith":"error", "message": "Creation of project " + .projectName + " denied", "outputs":[ { "key":"Jira issue", "value": $SECRET.jira_url + "/jira/servicedesk/projects/" + .operationsProjectKey + "/issues/" + .operationsJiraCreateIssueResult.key, "format":"link" }] } }'
+        operation: '{ "result": { "message": "Creation of project " + .projectName + " denied", "outputs":[ { "key":"Jira issue", "value": $SECRET.jira_url + "/jira/servicedesk/projects/" + .operationsProjectKey + "/issues/" + .operationsJiraCreateIssueResult.key, "format":"link" }] } }'
         type: expression
     start:
       stateName: '[Audit]: workflow started'
@@ -190,6 +190,36 @@ spec:
               before: PT10S
         name: 'Post operation: get project resource'
         transition:
+          nextState: '[Audit]: Close issue on Jira'
+        type: operation
+      - actionMode: sequential
+        actions:
+          - actionDataFilter:
+              toStateData: .jiraGetTransitionResult
+              useResults: true
+            functionRef:
+              arguments:
+                issueIdOrKey: .auditJiraCreateIssueResult.id
+              invoke: sync
+              refName: jiraGetIssueTransitions
+            name: get transition id
+          - actionDataFilter:
+              toStateData: .jiraCloseIssueResult
+              useResults: true
+            functionRef:
+              arguments:
+                issueIdOrKey: .auditJiraCreateIssueResult.id
+                transition:
+                  id: .jiraGetTransitionResult.transitions[] | select(.to.name | contains("Done")) | .id
+                update:
+                  comment:
+                    - add:
+                        body: '"Project " + .projectName + " is " + .project.status.phase'
+              invoke: sync
+              refName: jiraCloseIssue
+            name: Close issue on Jira due to Timeout
+        name: '[Audit]: Close issue on Jira'
+        transition:
           nextState: 'Post operation: check project resource created successfully'
         type: operation
       - dataConditions:
@@ -225,9 +255,9 @@ spec:
               invoke: sync
               refName: successResult
             name: setOutput
+        end:
+          terminate: true
         name: Notify project active
-        transition:
-          nextState: '[Audit]: Close issue on Jira'
         type: operation
       - actionMode: sequential
         actions:
@@ -252,39 +282,11 @@ spec:
               invoke: sync
               refName: errorProjectNotActiveResult
             name: setOutput
-        name: Notify project not active
-        transition:
-          nextState: '[Audit]: Close issue on Jira'
-        type: operation
-      - actionMode: sequential
-        actions:
-          - actionDataFilter:
-              toStateData: .jiraGetTransitionResult
-              useResults: true
-            functionRef:
-              arguments:
-                issueIdOrKey: .auditJiraCreateIssueResult.id
-              invoke: sync
-              refName: jiraGetIssueTransitions
-            name: get transition id
-          - actionDataFilter:
-              toStateData: .jiraCloseIssueResult
-              useResults: true
-            functionRef:
-              arguments:
-                issueIdOrKey: .auditJiraCreateIssueResult.id
-                transition:
-                  id: .jiraGetTransitionResult.transitions[] | select(.to.name | contains("Done")) | .id
-                update:
-                  comment:
-                    - add:
-                        body: '"Project " + .projectName + " is " + .project.status.phase'
-              invoke: sync
-              refName: jiraCloseIssue
-            name: Close issue on Jira due to Timeout
         end:
           terminate: true
-        name: '[Audit]: Close issue on Jira'
+        metadata:
+          errorMessage: '"Project " + .projectName + " not active"'
+        name: Notify project not active
         type: operation
       - actionMode: sequential
         actions:
@@ -320,12 +322,14 @@ spec:
             name: Close issue on Jira due to Timeout
         end:
           terminate: true
+        metadata:
+          errorMessage: '"Creation of project " + .projectName + " denied"'
         name: '[Audit]: Close issue on Jira - Project Creation Denied'
         type: operation
   podTemplate:
     container:
       resources: {}
-      image: quay.io/orchestrator/serverless-workflow-create-ocp-project:63211409cca60e07a7a98af0c7abcf823b333940
+      image: quay.io/orchestrator/serverless-workflow-create-ocp-project:c989ebb57fd4542f8d5fabc4566cdaf0a01b6885
       envFrom:
         - secretRef:
             name: create-ocp-project-creds
