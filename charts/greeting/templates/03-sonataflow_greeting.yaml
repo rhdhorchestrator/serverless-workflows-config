@@ -23,7 +23,7 @@ spec:
         operation: sysout
         type: custom
       - name: successResult
-        operation: '{ "result": { "completedWith":"success", "message": "Greeting workflow completed successfully", "outputs":[ { "key":"Selected language", "value": .language }, { "key":"Greeting message", "value": .greeting } ] } }'
+        operation: '{ "result": { "message": "Greeting workflow completed successfully", "outputs":[ { "key":"Selected language", "value": .language }, { "key":"Greeting message", "value": .greeting } ] } }'
         type: expression
     start:
       stateName: ChooseOnLanguage
@@ -75,7 +75,7 @@ spec:
   podTemplate:
     container:
       resources: {}
-      image: quay.io/orchestrator/serverless-workflow-greeting:63211409cca60e07a7a98af0c7abcf823b333940
+      image: quay.io/orchestrator/serverless-workflow-greeting:c989ebb57fd4542f8d5fabc4566cdaf0a01b6885
   resources:
     configMaps:
       - configMap:
