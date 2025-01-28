@@ -127,9 +127,11 @@ spec:
             name: createNotification
         end:
           terminate: true
+        metadata:
+          errorMessage: '"MTV plan " + .migrationName + " is not ready for migration"'
         name: PlanFailure
         stateDataFilter:
-          output: '{result: {completedWith: "error", message: .planErrorMessage}}'
+          output: '{result: {message: .planErrorMessage}}'
         type: operation
       - actionMode: sequential
         actions:
@@ -152,12 +154,12 @@ spec:
           terminate: true
         name: PlanReady
         stateDataFilter:
-          output: '{result: {completedWith: "success", message: "MTV plan successful", "nextWorkflows": [{id: "mtv-migration", name: "MTV migration workflow"}], "outputs": [] }}'
+          output: '{result: {message: "MTV plan successful", "nextWorkflows": [{id: "mtv-migration", name: "MTV migration workflow"}], "outputs": [] }}'
         type: operation
   podTemplate:
     container:
       resources: {}
-      image: quay.io/orchestrator/serverless-workflow-mtv-plan:63211409cca60e07a7a98af0c7abcf823b333940
+      image: quay.io/orchestrator/serverless-workflow-mtv-plan:0829d01e11c2c0aa29436296dcf99a05c9566139
       envFrom:
         - secretRef:
             name: mtv-plan-creds
