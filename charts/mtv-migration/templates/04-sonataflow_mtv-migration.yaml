@@ -32,10 +32,10 @@ spec:
         operation: .getStatusResult.status.conditions | map(select(.category == "Error" or .category == "Critical" or .type == "Failed"))[0].message
         type: expression
       - name: successResult
-        operation: '{ "result": { "completedWith":"success", "message": "MTV migration " + .migrationName + " succeeded", "outputs":[] } }'
+        operation: '{ "result": { "message": "MTV migration " + .migrationName + " succeeded", "outputs":[] } }'
         type: expression
       - name: errorResult
-        operation: '{ "result": { "completedWith":"error", "message": "MTV migration " + .migrationName + " failed.", "outputs":[ { "key":"Error", "value": .migrationErrorMessage } ] } }'
+        operation: '{ "result": { "message": "MTV migration " + .migrationName + " failed.", "outputs":[ { "key":"Error", "value": .migrationErrorMessage } ] } }'
         type: expression
     start:
       stateName: CreateMigration
@@ -126,6 +126,8 @@ spec:
             name: setOutput
         end:
           terminate: true
+        metadata:
+          errorMessage: '"MTV migration " + .migrationName + " failed"'
         name: MigrationFailure
         type: operation
       - actionMode: sequential
@@ -158,7 +160,7 @@ spec:
   podTemplate:
     container:
       resources: {}
-      image: quay.io/orchestrator/serverless-workflow-mtv-migration:63211409cca60e07a7a98af0c7abcf823b333940
+      image: quay.io/orchestrator/serverless-workflow-mtv-migration:0829d01e11c2c0aa29436296dcf99a05c9566139
       envFrom:
         - secretRef:
             name: mtv-migration-creds
