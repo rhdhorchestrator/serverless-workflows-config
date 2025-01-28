@@ -70,7 +70,7 @@ jobs:
             }
           )" charts/move2kube/templates/0?-sonataflow_m2k.yaml
 
-          K8S_INSTALL=1 BROKER_NAME=broker M2K_HELM_REPO=charts/move2kube/. PRIV_ID_RSA_PATH=id_rsa PUB_ID_RSA_PATH=id_rsa.pub M2K_HELM_REPO=charts/move2kube/ TARGET_NS=default ./docs/main/move2kube/install_m2k.sh
+          K8S_INSTALL=1 BROKER_NAME=broker BROKER_NAMESPACE=default M2K_HELM_REPO=charts/move2kube/. PRIV_ID_RSA_PATH=id_rsa PUB_ID_RSA_PATH=id_rsa.pub M2K_HELM_REPO=charts/move2kube/ TARGET_NS=default ./docs/main/move2kube/install_m2k.sh
 
       - name: Run e2e script
         run: |

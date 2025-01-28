@@ -65,9 +65,10 @@ Set `M2K_INSTANCE_NS` to the namespace hosting the move2kube instance:
 M2K_INSTANCE_NS=move2kube
 ```
 
-Set `BROKER_NAME` to the name of the broker. It shall be in the same namespace as the workflow, e.g: `TARGET_NS`:
+Set `BROKER_NAME` to the name of the broker and `BROKER_NAMESPACE` to its namespace, here it will be in `TARGET_NS`. 
 ```console
 BROKER_NAME=kafka-broker
+BROKER_NAMESPACE=${TARGET_NS}
 ```
 
 #### For Knative
@@ -107,7 +108,7 @@ View the [Move2Kube README](https://github.com/rhdhorchestrator/serverless-workf
 Run 
 ```console
 helm repo add orchestrator-workflows https://rhdhorchestrator.io/serverless-workflows-config
-helm install move2kube orchestrator-workflows/move2kube -n ${TARGET_NS} --set instance.namespace=${M2K_INSTANCE_NS} --set brokerName=${BROKER_NAME}
+helm install move2kube orchestrator-workflows/move2kube -n ${TARGET_NS} --set instance.namespace=${M2K_INSTANCE_NS} --set brokerName=${BROKER_NAME} --set brokerNamespace=${BROKER_NAMESPACE}
 ```
 
 ### Post-installation
@@ -131,7 +132,7 @@ Run the following command or follow the steps prompted at the end of the workflo
 ```console
 M2K_ROUTE=$(oc -n ${M2K_INSTANCE_NS} get routes move2kube-route -o yaml | yq -r .spec.host)
 oc -n ${TARGET_NS} delete ksvc m2k-save-transformation-func &&
-  helm upgrade move2kube orchestrator-workflows/move2kube -n ${TARGET_NS} --set workflow.move2kubeURL=https://${M2K_ROUTE} --set brokerName=${BROKER_NAME}
+  helm upgrade move2kube orchestrator-workflows/move2kube -n ${TARGET_NS} --set workflow.move2kubeURL=https://${M2K_ROUTE} --set brokerName=${BROKER_NAME} --set brokerNamespace=${BROKER_NAMESPACE}
 ```
 
 #### Edit the `${WORKFLOW_NAME}-creds` Secret
