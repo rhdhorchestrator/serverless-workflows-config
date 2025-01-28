@@ -54,10 +54,10 @@ spec:
         operation: '{ exitMessage: "Error while saving transformation output: " + (if .error == null then "timeout exception was thrown." else .error end) }'
         type: expression
       - name: successResult
-        operation: '{ "result": { "completedWith":"success", "message": "Move2Kube workflow  " + $WORKFLOW.instanceId + " on workspace " + .workspaceId + " and project " + .projectId + " was successful; the output is available in the branch " + .targetBranch + " of your git repository "+ .repositoryURL, "outputs": [ { "key":"Git repository", "value": .repositoryURL, "format":"link" }, { "key":"Git branch", "value": .targetBranch } ] } }'
+        operation: '{ "result": { "message": "Move2Kube workflow  " + $WORKFLOW.instanceId + " on workspace " + .workspaceId + " and project " + .projectId + " was successful; the output is available in the branch " + .targetBranch + " of your git repository "+ .repositoryURL, "outputs": [ { "key":"Git repository", "value": .repositoryURL, "format":"link" }, { "key":"Git branch", "value": .targetBranch } ] } }'
         type: expression
       - name: errorResult
-        operation: '{ "result": { "completedWith":"error", "message": "Move2Kube workflow  " + $WORKFLOW.instanceId + " on workspace " + .workspaceId + " and project " + .projectId + " failed ", "outputs":[ { "key":"Exit message", "value": .exitMessage }, { "key":"Plan retries", "value": (.planRetries|tostring), "format":"number" } ] } }'
+        operation: '{ "result": { "message": "Move2Kube workflow  " + $WORKFLOW.instanceId + " on workspace " + .workspaceId + " and project " + .projectId + " failed ", "outputs":[ { "key":"Exit message", "value": .exitMessage }, { "key":"Plan retries", "value": (.planRetries|tostring), "format":"number" } ] } }'
         type: expression
     start:
       stateName: StartPlanning
@@ -255,6 +255,8 @@ spec:
         completionType: allOf
         end:
           terminate: true
+        metadata:
+          errorMessage: '"Move2kube (m2k) workflow: " + $WORKFLOW.instanceId + " has finalized with error. Exit message: " + .exitMessage + " -- Plan retries: " + (.planRetries|tostring)'
         name: PrintExitErrorMessage
         numCompleted: 0
         type: parallel
@@ -303,7 +305,7 @@ spec:
   podTemplate:
     container:
       resources: {}
-      image: quay.io/orchestrator/serverless-workflow-move2kube:67a3e2ab
+      image: quay.io/orchestrator/serverless-workflow-move2kube:0829d01e11c2c0aa29436296dcf99a05c9566139
       envFrom:
         - secretRef:
             name: m2k-creds
