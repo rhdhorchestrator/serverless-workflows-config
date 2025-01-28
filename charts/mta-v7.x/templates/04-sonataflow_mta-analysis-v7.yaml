@@ -22,6 +22,9 @@ spec:
       - name: filterApplication
         operation: '{application: .applications|map(select(.repository.url == .repositoryURL))[0]}'
         type: expression
+      - name: deleteTaskGroup
+        operation: specs/mta.json#deleteTaskGroup
+        type: rest
       - name: getApplication
         operation: specs/mta.json#getApplications
         type: rest
@@ -107,13 +110,16 @@ spec:
         operation: '{ exitMessage: "There are no trackerProjectIssueTypes in the trackerProject with the id " + (.trackerProject.id|tostring) + " of the tracker with the id "+ (.tracker.id|tostring) +", cannot export to the issue manager" }'
         type: expression
       - name: successResult
-        operation: '{ "message": "MTA v7.x analysis completed for " + .repositoryURL, "outputs":[ { "key":"MTA Analysis Result URL", "value": $SECRET.mta.url + "/hub/applications/" + (.application.id|tostring) + "/analysis/report", "format":"link" }, { "key":"Migration Wave Ticket URL", "value": (if .migrationWaveJiraTicket != null then .migrationWaveJiraTicket.link else "" end), "format":"link" } ], "nextWorkflows":[ { "id":"m2k", "name":"Move2Kube workflow" } ] }'
+        operation: '{ result: { message: "MTA v7.x analysis completed for " + .repositoryURL, outputs:[ { key:"MTA Analysis Result URL", value: $SECRET.mta.url + "/hub/applications/" + (.application.id|tostring) + "/analysis/report", format:"link" }, { key:"Migration Wave Ticket URL", value: (if .migrationWaveJiraTicket != null then .migrationWaveJiraTicket.link else "" end), format:"link" } ], nextWorkflows:[ { id:"m2k", name:"Move2Kube workflow" } ] } }'
         type: expression
       - name: mandatoriesIncidentsResult
-        operation: '{ "message": "MTA analysis for " + .application.repository.url + " completed with " + (.application.mandatoriesIncidents|tostring) + " incidents in mandatory issues that need to be fixed before being able to provide any next possible workflow. Check the analysis report." + (if .migrationWaveJiraTicket != null then " Application was exported to issue manager." else "" end), "outputs": [ { "key":"MTA Analysis Result URL", "value": ($SECRET.mta.url + "/hub/applications/" + (.application.id|tostring) + "/analysis/report"), "format": "link" }, { "key":"Migration Wave Ticket URL", "value": (if .migrationWaveJiraTicket != null then .migrationWaveJiraTicket.link else "" end), "format": "link" } ] }'
+        operation: '{ result: { message: "MTA analysis for " + .application.repository.url + " completed with " + (.application.mandatoriesIncidents|tostring) + " incidents in mandatory issues that need to be fixed before being able to provide any next possible workflow. Check the analysis report." + (if .migrationWaveJiraTicket != null then " Application was exported to issue manager." else "" end), outputs: [ { key:"MTA Analysis Result URL", value: ($SECRET.mta.url + "/hub/applications/" + (.application.id|tostring) + "/analysis/report"), format: "link" }, { key:"Migration Wave Ticket URL", value: (if .migrationWaveJiraTicket != null then .migrationWaveJiraTicket.link else "" end), format: "link" } ] } }'
         type: expression
       - name: errorResult
-        operation: '{ "message": "MTA analysis for " + .application.repository.url + " failed: " + .exitMessage + ". Check logs of task pod: " + .taskgroup.tasks[0].pod }'
+        operation: '{ result: { message: "MTA analysis for " + .application.repository.url + " failed: " + .exitMessage + ". Check logs of task pod: " + .taskgroup.tasks[0].pod } }'
+        type: expression
+      - name: abortResult
+        operation: '{ result: { message: "MTA analysis for " + .application.repository.url + " aborted, all in progress tasks were cancelled." } }'
         type: expression
     start:
       stateName: CreateApplication
@@ -187,22 +193,13 @@ spec:
               invoke: sync
               refName: submitTaskgroup
             name: submitTaskgroup
+        compensatedBy: CancelTaskOnAbort
         name: SubmitAnalysis
         transition:
           nextState: pollResults
         type: operation
       - actionMode: sequential
         actions:
-          - actionDataFilter:
-              useResults: true
-            functionRef:
-              arguments:
-                message: '"Sleeping before checking the analysis result "'
-              invoke: sync
-              refName: logInfo
-            name: SleepBeforeChecking
-            sleep:
-              after: PT30S
           - actionDataFilter:
               toStateData: .taskgroup
               useResults: true
@@ -212,19 +209,15 @@ spec:
               invoke: sync
               refName: getTaskgroup
             name: getTaskgroup
-          - actionDataFilter:
-              useResults: true
-            functionRef:
-              arguments:
-                message: '"Logging data: \(.)"'
-              invoke: sync
-              refName: logInfo
-            name: logTaskGroup
+            sleep:
+              before: PT30S
+        compensatedBy: CancelTaskOnAbort
         name: pollResults
         transition:
           nextState: checkReportDone
         type: operation
-      - dataConditions:
+      - compensatedBy: CancelTaskOnAbort
+        dataConditions:
           - condition: (.taskgroup.state == "Ready" and (.taskgroup.tasks[0].state == "Running" or (.taskgroup.tasks[0].state == "Pending" or .taskgroup.tasks[0].state == "Postponed")))
             name: taskNotCompleted
             transition:
@@ -274,14 +267,6 @@ spec:
               invoke: sync
               refName: countMandatoriesIncidents
             name: countApplicationMandatoryIncident
-          - actionDataFilter:
-              useResults: true
-            functionRef:
-              arguments:
-                message: '"Mandatory incidents: \(.application.mandatoriesIncidents|tostring)"'
-              invoke: sync
-              refName: logInfo
-            name: logMandatoriesIncidents
         name: CountMandatoriesIncidents
         transition:
           nextState: CountNonMandatoriesIncidents
@@ -295,14 +280,6 @@ spec:
               invoke: sync
               refName: countNonMandatoriesIncidents
             name: countApplicationNotMandatoryIncident
-          - actionDataFilter:
-              useResults: true
-            functionRef:
-              arguments:
-                message: '"Non-mandatory incidents: \(.application.nonMandatoriesIncidents|tostring)"'
-              invoke: sync
-              refName: logInfo
-            name: logNonMandatoriesIncidents
         name: CountNonMandatoriesIncidents
         transition:
           nextState: CheckMandatoriesIncidents
@@ -523,14 +500,6 @@ spec:
       - actionMode: sequential
         actions:
           - actionDataFilter:
-              useResults: true
-            functionRef:
-              arguments:
-                message: '"Logging data: \(.)"'
-              invoke: sync
-              refName: logInfo
-            name: logInfo
-          - actionDataFilter:
               toStateData: .createdJiraTicket
               useResults: true
             functionRef:
@@ -588,14 +557,7 @@ spec:
                   type: entity
               invoke: sync
               refName: createNotification
-        name: NotifyCompletion
-        transition:
-          nextState: reportCompletion
-        type: operation
-      - actionMode: sequential
-        actions:
           - actionDataFilter:
-              toStateData: .result
               useResults: true
             functionRef:
               invoke: sync
@@ -603,9 +565,7 @@ spec:
             name: reportCompletion
         end:
           terminate: true
-        name: reportCompletion
-        stateDataFilter:
-          output: . += .result
+        name: NotifyCompletion
         type: operation
       - actionMode: sequential
         actions:
@@ -624,14 +584,7 @@ spec:
                   type: entity
               invoke: sync
               refName: createNotification
-        name: NotifyMandatoriesIncidentsInApplication
-        transition:
-          nextState: reportCompletionWithMandatoriesIncidentsInApplication
-        type: operation
-      - actionMode: sequential
-        actions:
           - actionDataFilter:
-              toStateData: .result
               useResults: true
             functionRef:
               invoke: sync
@@ -639,9 +592,7 @@ spec:
             name: reportCompletionWithMandatoriesIncidentsInApplication
         end:
           terminate: true
-        name: reportCompletionWithMandatoriesIncidentsInApplication
-        stateDataFilter:
-          output: . += .result
+        name: NotifyMandatoriesIncidentsInApplication
         type: operation
       - actionMode: sequential
         actions:
@@ -666,7 +617,6 @@ spec:
       - actionMode: sequential
         actions:
           - actionDataFilter:
-              toStateData: .result
               useResults: true
             functionRef:
               invoke: sync
@@ -677,16 +627,58 @@ spec:
         metadata:
           errorMessage: '"MTA analysis for " + .application.repository.url + " failed: " + .exitMessage + ". Check logs of task pod: " + .taskgroup.tasks[0].pod'
         name: reportFailure
-        stateDataFilter:
-          output: . += .result
         type: operation
+      - actionMode: sequential
+        actions:
+          - actionDataFilter:
+              useResults: true
+            functionRef:
+              arguments:
+                message: '${"MTA workflow: " + $WORKFLOW.instanceId + " was aborted while task was still in progress}"'
+              invoke: sync
+              refName: logInfo
+            name: logInfo
+          - actionDataFilter:
+              useResults: true
+            functionRef:
+              arguments:
+                id: .taskgroup.id
+              invoke: sync
+              refName: deleteTaskGroup
+            name: abortTasks
+          - actionDataFilter:
+              useResults: true
+            functionRef:
+              arguments:
+                payload:
+                  description: '"MTA analysis for " + .application.repository.url + " aborted while tasks still in progress, tasks were cancelled"'
+                  severity: critical
+                  title: MTA analysis aborted
+                  topic: MTA Analysis Workflow
+                recipients:
+                  entityRef: .recipients
+                  type: entity
+              invoke: sync
+              refName: createNotification
+            name: createNotification
+          - actionDataFilter:
+              useResults: true
+            functionRef:
+              invoke: sync
+              refName: abortResult
+            name: reportAbort
+        metadata:
+          errorMessage: '"MTA analysis for " + .application.repository.url + " aborted"'
+        name: CancelTaskOnAbort
+        type: operation
+        usedForCompensation: true
     timeouts:
       workflowExecTimeout:
         duration: PT1H
   podTemplate:
     container:
       resources: {}
-      image: quay.io/orchestrator/serverless-workflow-mta-v7.x:0829d01e11c2c0aa29436296dcf99a05c9566139
+      image: quay.io/orchestrator/serverless-workflow-mta-v7.x:7dbf5182e24f64bf29bf8f526d073ce62af20a95
       envFrom:
         - secretRef:
             name: mta-analysis-v7-creds
