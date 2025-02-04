@@ -678,7 +678,7 @@ spec:
   podTemplate:
     container:
       resources: {}
-      image: quay.io/orchestrator/serverless-workflow-mta-v7.x:7dbf5182e24f64bf29bf8f526d073ce62af20a95
+      image: quay.io/orchestrator/serverless-workflow-mta-v7.x:73c1df8dabb75b5db33bb8ef623eef6de9f513ee
       envFrom:
         - secretRef:
             name: mta-analysis-v7-creds
