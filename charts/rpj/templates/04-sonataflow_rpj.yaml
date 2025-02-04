@@ -29,10 +29,10 @@ spec:
         operation: sysout
         type: custom
       - name: successResult
-        operation: '{ "result": { "completedWith":"success", "message": "RPJ workflow  " + $WORKFLOW.instanceId + " was successful", "outputs": [ { "key":"Launch ID", "value": .launchId }, { "key":"Epic code", "value": (if .epicCode == null then "None provided" else .epicCode end) } ] } }'
+        operation: '{ "result": { "message": "RPJ workflow  " + $WORKFLOW.instanceId + " was successful", "outputs": [ { "key":"Launch ID", "value": .launchId }, { "key":"Epic code", "value": (if .epicCode == null then "None provided" else .epicCode end) } ] } }'
         type: expression
       - name: errorResult
-        operation: '{ "result": { "completedWith":"error", "message": "RPJ workflow  " + $WORKFLOW.instanceId + " failed", "outputs": [ { "key":"Launch ID", "value": .launchId }, { "key":"Epic code", "value": (if .epicCode == null then "None provided" else .epicCode end) }, { "key":"Run result message", "value": .runResults.message } ] } }'
+        operation: '{ "result": { "message": "RPJ workflow  " + $WORKFLOW.instanceId + " failed", "outputs": [ { "key":"Launch ID", "value": .launchId }, { "key":"Epic code", "value": (if .epicCode == null then "None provided" else .epicCode end) }, { "key":"Run result message", "value": .runResults.message } ] } }'
         type: expression
     start:
       stateName: Run
@@ -133,6 +133,8 @@ spec:
             name: setOutput
         end:
           terminate: true
+        metadata:
+          errorMessage: '"RPJ run failed for launch " + .launchId'
         name: NotifyFailureBackstage
         type: operation
     timeouts:
@@ -141,7 +143,7 @@ spec:
   podTemplate:
     container:
       resources: {}
-      image: quay.io/orchestrator/serverless-workflow-rpj:63211409cca60e07a7a98af0c7abcf823b333940
+      image: quay.io/orchestrator/serverless-workflow-rpj:1ac090a7c174c1a66c2440282620adbf4a7b2380
       envFrom:
         - secretRef:
             name: rpj-creds
