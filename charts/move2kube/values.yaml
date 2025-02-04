@@ -7,7 +7,7 @@ workflow:
   backstageNotificationURL: http://orchestrator-backstage.orchestrator:7007/api/notifications/ # URL for backstage notification plugin
 kfunction:
   name: m2k-save-transformation-func # name of the Knative function that save the transformation output to git
-  image: quay.io/orchestrator/serverless-workflow-m2k-kfunc:62a07f3ebe62d78e4dde85093fd1b67b8dac9a74 # image of the knative function
+  image: quay.io/orchestrator/serverless-workflow-m2k-kfunc:73c1df8dabb75b5db33bb8ef623eef6de9f513ee # image of the knative function
 instance:
   name: move2kube # name of the move2kube instance deployment
   image: quay.io/konveyor/move2kube-ui:v0.3.14 # image of the move2kube instance
