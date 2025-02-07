@@ -60,7 +60,7 @@ if [[ -z "${K8S_INSTALL}" ]]; then
 fi
 
 "${CLUSTER_CLIENT}" -n ${M2K_INSTANCE_NS} create secret generic sshkeys --from-file=id_rsa=${PRIV_ID_RSA_PATH} --from-file=id_rsa.pub=${PUB_ID_RSA_PATH}
-"${CLUSTER_CLIENT}" -n ${M2K_INSTANCE_NS} scale deploy move2kube --replicas=0 && "${CLUSTER_CLIENT}" -n ${M2K_INSTANCE_NS} scale deploy move2kube --replicas=1
+"${CLUSTER_CLIENT}" -n ${M2K_INSTANCE_NS} rollout restart deploy move2kube
 "${CLUSTER_CLIENT}" -n ${M2K_INSTANCE_NS} wait --for=condition=Ready=true --timeout=2m pod -l app=move2kube
 
 if [[ -z "${K8S_INSTALL}" ]]; then
