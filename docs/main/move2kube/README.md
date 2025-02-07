@@ -55,40 +55,23 @@ M2K_HELM_REPO=. PRIV_ID_RSA_PATH=${HOME}/.ssh/id_rsa PUB_ID_RSA_PATH=${HOME}/.ss
 ```
 ## Manual installation
 ### Prerequisites 
-Set `TARGET_NS` to the target namespace:
+* Set `TARGET_NS` to the target namespace:
 ```console
 TARGET_NS=sonataflow-infra
 ```
 
-Set `M2K_INSTANCE_NS` to the namespace hosting the move2kube instance:
+* Set `M2K_INSTANCE_NS` to the namespace hosting the move2kube instance:
 ```console
 M2K_INSTANCE_NS=move2kube
 ```
 
-Set `BROKER_NAME` to the name of the broker and `BROKER_NAMESPACE` to its namespace, here it will be in `TARGET_NS`. 
+* Set `BROKER_NAME` to the name of the broker and `BROKER_NAMESPACE` to its namespace, here it will be in `TARGET_NS`. 
 ```console
 BROKER_NAME=kafka-broker
 BROKER_NAMESPACE=${TARGET_NS}
 ```
 
-#### For Knative
-We need to use `initContainers` and `securityContext` in our Knative services to allow SSH key exchange in move2kube workflow, we have to tell Knative to enable that feature:
-```bash
-  oc patch configmap/config-features \
-    -n knative-serving \
-    --type merge \
-    -p '{"data":{"kubernetes.podspec-init-containers": "enabled", "kubernetes.podspec-securitycontext": "enabled"}}'
-
-```
-#### For move2kube instance
-1. `move2kube` instance runs as root so we need to allow the `default` service account to use `runAsUser`:
-To know which scc is to be set to the default service account and apply it, run:
-```console
-oc -n ${TARGET_NS} adm policy add-scc-to-user $(oc -n ${TARGET_NS} get deployments m2k-save-transformation-func-v1-deployment -oyaml | oc adm policy scc-subject-review --no-headers  -o yaml --filename - | yq -r .status.allowedBy.name) -z default
-```
-
-
-2. Create the secret that holds the ssh keys:
+* Create the secret that holds the ssh keys:
 ```console
 oc -n ${TARGET_NS} create secret generic sshkeys --from-file=id_rsa=${HOME}/.ssh/id_rsa --from-file=id_rsa.pub=${HOME}/.ssh/id_rsa.pub
 ```
@@ -103,6 +86,16 @@ Note that those ssh keys need to be added to your git repository as well. For bi
 View the [Move2Kube README](https://github.com/rhdhorchestrator/serverless-workflows-config/blob/main/charts/move2kube/README.md) on GitHub.
 
 
+#### For Knative
+We need to use `initContainers` and `securityContext` in our Knative services to allow SSH key exchange in move2kube workflow, we have to tell Knative to enable that feature:
+```bash
+  oc patch configmap/config-features \
+    -n knative-serving \
+    --type merge \
+    -p '{"data":{"kubernetes.podspec-init-containers": "enabled", "kubernetes.podspec-securitycontext": "enabled"}}'
+
+```
+
 ### Installation
 
 Run 
@@ -113,6 +106,13 @@ helm install move2kube orchestrator-workflows/move2kube -n ${TARGET_NS} --set in
 
 ### Post-installation
 
+#### Configure Knative service m2k-save-transformation-func-v1
+1. `m2k-save-transformation-func-v1` Knative service runs as root so we need to allow the `default` service account to use `runAsUser` by setting the right permissions:
+To know which scc is to be set to the default service account and apply it, run:
+```console
+oc -n ${TARGET_NS} adm policy add-scc-to-user $(oc -n ${TARGET_NS} get deployments m2k-save-transformation-func-v1-deployment -oyaml | oc adm policy scc-subject-review --no-headers  -o yaml --filename - | yq -r .status.allowedBy.name) -z default
+```
+
 #### Configure move2kube instance
 To create SSH Keys secret for move2kube instance and connfigure SCC, run:
 ```console
@@ -122,7 +122,7 @@ oc -n ${M2K_INSTANCE_NS} create secret generic sshkeys --from-file=id_rsa=${HOME
 
 Then force the pod to be recreated:
 ```console
-oc -n ${M2K_INSTANCE_NS} scale deploy move2kube --replicas=0 && oc -n ${M2K_INSTANCE_NS} scale deploy move2kube --replicas=1
+oc -n ${M2K_INSTANCE_NS} rollout restart deploy move2kube
 ```
 
 #### Set `M2K_ROUTE` and `BROKER_URL` for the Knative service
@@ -146,10 +146,13 @@ oc -n ${TARGET_NS} patch secret "${WORKFLOW_NAME}-creds" --type merge -p '{"data
 
 This secret is used in the `sonataflow` CR to inject the token as an environment variable that will be used by the workflow.
 
-Once the secret is updated, to have it applied, the pod shall be restarted. 
-Note that the modification of the secret does not currently restart the pod, the action shall be performed manually or, if you are following the next section, any change to the sonataflow CR will restart the pod.
+> [!WARNING]
+> Once the secret is updated, to have it applied, the pod shall be restarted. 
+> The modification of the secret does not currently restart the pod, the action shall be performed manually or, if you are following the next section, any change to the sonataflow CR will restart the pod.
 
-Note that when you run the `helm upgrade` command, the values of the secret are reseted.
+
+> [!NOTE]
+> When you run the `helm upgrade` command, the values of the secret are reseted.
 
 #### Set `M2K_ROUTE` and `BACKSTAGE_NOTIFICATIONS_URL` for the Sonataflow CR
 
