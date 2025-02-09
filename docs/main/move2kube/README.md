@@ -114,7 +114,7 @@ oc -n ${TARGET_NS} adm policy add-scc-to-user $(oc -n ${TARGET_NS} get deploymen
 ```
 
 #### Configure move2kube instance
-To create SSH Keys secret for move2kube instance and connfigure SCC, run:
+To create SSH Keys secret for move2kube instance and configure SCC, run:
 ```console
 oc -n ${M2K_INSTANCE_NS} adm policy add-scc-to-user anyuid -z default
 oc -n ${M2K_INSTANCE_NS} create secret generic sshkeys --from-file=id_rsa=${HOME}/.ssh/id_rsa --from-file=id_rsa.pub=${HOME}/.ssh/id_rsa.pub
@@ -152,7 +152,7 @@ This secret is used in the `sonataflow` CR to inject the token as an environment
 
 
 > [!NOTE]
-> When you run the `helm upgrade` command, the values of the secret are reseted.
+> When you run the `helm upgrade` command, the values of the secret are reset.
 
 #### Set `M2K_ROUTE` and `BACKSTAGE_NOTIFICATIONS_URL` for the Sonataflow CR
 
