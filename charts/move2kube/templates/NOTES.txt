@@ -9,7 +9,6 @@ Helm Release {{ .Release.Name }} installed in namespace {{ $ns }}.
 {{- $timeout := "--timeout=2m" }}
 {{- $brokerName := "kafka-broker" }}
 {{- $targetNS := "sonataflow-infra" }}
-{{- $goTemplate := ".data.BACKEND_SECRET"  }}
 
 Components                                     Installed   Namespace
 ====================================================================
@@ -46,7 +45,7 @@ Once again, run the following commands to wait until the move2kube workflow depe
   oc wait -n {{ $ns }} sonataflow/{{ .Values.workflow.name }} --for=condition=Running {{ $timeout }}
 
 Edit the secret {{ .Values.workflow.name }}-creds and set the value of NOTIFICATIONS_BEARER_TOKEN:
-oc -n ${TARGET_NS} patch secret "{{ .Values.workflow.name }}-creds" --type merge -p '{"data": { "NOTIFICATIONS_BEARER_TOKEN": "'$(oc get secrets -n {{ $ns }} backstage-backend-auth-secret -o go-template=$goTemplate)'"}}'
+oc -n ${TARGET_NS} patch secret "{{ .Values.workflow.name }}-creds" --type merge -p '{"data": { "NOTIFICATIONS_BEARER_TOKEN": "'$(oc get secrets -n {{ $ns }} backstage-backend-auth-secret -o go-template=".data.BACKEND_SECRET")'"}}'
 
 Once all commands are completed, set the value of $M2K_ROUTE to the move2kube workflow m2k-props configmap:
 
