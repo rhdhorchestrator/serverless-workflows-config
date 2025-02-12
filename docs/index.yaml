@@ -3356,6 +3356,17 @@ entries:
   mtv-plan:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2025-02-12T19:30:07.647447063Z"
+    description: A Helm chart for the MTV Plan serverless assessment workflow
+    digest: 2582f0ff858a4d7eb87f852dd8c0cc603dd758ee3a0381f002ccab2de2add3f5
+    icon: https://raw.githubusercontent.com/rhdhorchestrator/rhdhorchestrator.github.io/main/assets/images/WO_black.svg
+    name: mtv-plan
+    type: application
+    urls:
+    - https://github.com/rhdhorchestrator/serverless-workflows-config/releases/download/mtv-plan-1.4.0-rc3/mtv-plan-1.4.0-rc3.tgz
+    version: 1.4.0-rc3
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2025-02-11T08:27:50.454814881Z"
     description: A Helm chart for the MTV Plan serverless assessment workflow
     digest: cee8fd2549537f53e2ea032d199378b4603adcc005c5466c356cee971c125f7d
@@ -3400,9 +3411,9 @@ entries:
     version: 1.3.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-12-09T11:00:20.461024112Z"
+    created: "2024-12-12T10:42:40.640234745Z"
     description: A Helm chart for the MTV Plan serverless assessment workflow
-    digest: bb6d9bbded85b1bcfadc42e393ef9ae43c5802b2a1e1e37d3120aec3c3b0023c
+    digest: fe6b98898cfb1f710374a469f3ab429b982440c51e2db2c6748de76285db633d
     icon: https://raw.githubusercontent.com/rhdhorchestrator/rhdhorchestrator.github.io/main/assets/images/WO_black.svg
     name: mtv-plan
     type: application
@@ -3422,9 +3433,9 @@ entries:
     version: 1.3.0-rc6
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-12-12T10:42:40.640234745Z"
+    created: "2024-12-09T11:00:20.461024112Z"
     description: A Helm chart for the MTV Plan serverless assessment workflow
-    digest: fe6b98898cfb1f710374a469f3ab429b982440c51e2db2c6748de76285db633d
+    digest: bb6d9bbded85b1bcfadc42e393ef9ae43c5802b2a1e1e37d3120aec3c3b0023c
     icon: https://raw.githubusercontent.com/rhdhorchestrator/rhdhorchestrator.github.io/main/assets/images/WO_black.svg
     name: mtv-plan
     type: application
@@ -4661,4 +4672,4 @@ entries:
     urls:
     - https://github.com/rgolangh/serverless-workflows-config/releases/download/workflows-0.1.0/workflows-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-12T19:29:53.874344906Z"
+generated: "2025-02-12T19:30:07.648838612Z"
