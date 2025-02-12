@@ -3025,6 +3025,17 @@ entries:
   mtv-migration:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2025-02-12T19:29:34.305678906Z"
+    description: A Helm chart for the MTV Migration serverless workflow
+    digest: c6b5802f363a07d7eafada7c1c1f638a7fd45ce54a6aadfc3199d5b5cfa8e8d2
+    icon: https://raw.githubusercontent.com/rhdhorchestrator/rhdhorchestrator.github.io/main/assets/images/WO_black.svg
+    name: mtv-migration
+    type: application
+    urls:
+    - https://github.com/rhdhorchestrator/serverless-workflows-config/releases/download/mtv-migration-1.4.0-rc3/mtv-migration-1.4.0-rc3.tgz
+    version: 1.4.0-rc3
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2025-02-11T08:27:09.034504209Z"
     description: A Helm chart for the MTV Migration serverless workflow
     digest: 759022bb148ade8ee25e78a056cd50eb9e49805cae3282a84bb5fe10213b9e45
@@ -3069,9 +3080,9 @@ entries:
     version: 1.3.0
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-12-12T10:22:02.835910569Z"
+    created: "2024-12-12T10:42:40.427374848Z"
     description: A Helm chart for the MTV Migration serverless workflow
-    digest: 32a4b34c6a74ec18c4ae0865ee7ad3d5c385c6bba08b48c6c72d7da45b621417
+    digest: b8d4a7fe44033ab5de96b4f5672a93e495aae6d3ecee160933bcb32d6c803ea2
     icon: https://raw.githubusercontent.com/rhdhorchestrator/rhdhorchestrator.github.io/main/assets/images/WO_black.svg
     name: mtv-migration
     type: application
@@ -3091,9 +3102,9 @@ entries:
     version: 1.3.0-rc8
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-12-12T10:42:40.427374848Z"
+    created: "2024-12-12T10:22:02.835910569Z"
     description: A Helm chart for the MTV Migration serverless workflow
-    digest: b8d4a7fe44033ab5de96b4f5672a93e495aae6d3ecee160933bcb32d6c803ea2
+    digest: 32a4b34c6a74ec18c4ae0865ee7ad3d5c385c6bba08b48c6c72d7da45b621417
     icon: https://raw.githubusercontent.com/rhdhorchestrator/rhdhorchestrator.github.io/main/assets/images/WO_black.svg
     name: mtv-migration
     type: application
@@ -4628,4 +4639,4 @@ entries:
     urls:
     - https://github.com/rgolangh/serverless-workflows-config/releases/download/workflows-0.1.0/workflows-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-12T19:29:20.74255915Z"
+generated: "2025-02-12T19:29:34.306664584Z"
