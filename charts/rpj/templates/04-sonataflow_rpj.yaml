@@ -143,7 +143,7 @@ spec:
   podTemplate:
     container:
       resources: {}
-      image: quay.io/orchestrator/serverless-workflow-rpj:1ac090a7c174c1a66c2440282620adbf4a7b2380
+      image: quay.io/orchestrator/serverless-workflow-rpj:96d772297d3ee964ab9775d7aae7dbbd4f070dd7
       envFrom:
         - secretRef:
             name: rpj-creds
