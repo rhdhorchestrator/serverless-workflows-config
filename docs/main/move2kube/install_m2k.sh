@@ -38,6 +38,14 @@ if [[ -z "${M2K_HELM_REPO}" ]]; then
   helm repo add orchestrator-workflows https://rhdhorchestrator.io/serverless-workflows-config
 fi
 
+if [[ ! -z "${M2K_VERSION}" ]]; then
+  M2K_VERSION="latest"
+fi
+
+if [[ ! -z "${SELF_SIGNED}" ]]; then
+  SELF_SIGNED="false"
+fi
+
 M2K_INSTANCE_NS=move2kube
 WORKFLOW_NAME=m2k
 
@@ -46,9 +54,9 @@ WORKFLOW_NAME=m2k
     --type merge \
     -p '{"data":{"kubernetes.podspec-init-containers": "enabled", "kubernetes.podspec-securitycontext": "enabled"}}'
 "${CLUSTER_CLIENT}" -n ${TARGET_NS} create secret generic sshkeys --from-file=id_rsa=${PRIV_ID_RSA_PATH} --from-file=id_rsa.pub=${PUB_ID_RSA_PATH}
-helm install move2kube ${M2K_HELM_REPO} -n ${TARGET_NS} --set instance.namespace=${M2K_INSTANCE_NS} --set brokerName=${BROKER_NAME}  --set brokerNamespace=${BROKER_NAMESPACE}
+helm install move2kube ${M2K_HELM_REPO} --version ${M2K_VERSION} -n ${TARGET_NS} --set instance.namespace=${M2K_INSTANCE_NS} --set brokerName=${BROKER_NAME}  --set brokerNamespace=${BROKER_NAMESPACE}
 if [ $? -ne 0 ]; then
-  echo "move2kube chart already installed, run  helm delete move2kube -n ${TARGET_NS} to remove it"
+  echo "move2kube chart already installed, run helm delete move2kube -n ${TARGET_NS} to remove it"
   exit 1
 fi
 
@@ -66,6 +74,10 @@ fi
 if [[ -z "${K8S_INSTALL}" ]]; then
   M2K_ROUTE="https://"$("${CLUSTER_CLIENT}" -n ${M2K_INSTANCE_NS} get routes move2kube-route -o yaml | yq -r .spec.host)
 else
+  M2K_ROUTE="http://move2kube-svc.${M2K_INSTANCE_NS}.svc.cluster.local:8080"
+fi
+
+if [[ "${SELF_SIGNED}" == "true" ]]; then
   M2K_ROUTE="http://move2kube-svc.${M2K_INSTANCE_NS}.svc.cluster.local:8080"
 fi
 

@@ -28,6 +28,15 @@
               "default"
           ]
       },
+      "version": {
+        "type": "string",
+        "default": "latest",
+        "title": "M2K chart version",
+        "examples": [
+            "latest",
+            "1.3.0"
+        ]
+      },
       "workflow": {
           "type": "object",
           "default": {},

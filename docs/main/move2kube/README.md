@@ -53,6 +53,17 @@ To use the local file, set `M2K_HELM_REPO` to `.`:
 ```console
 M2K_HELM_REPO=. PRIV_ID_RSA_PATH=${HOME}/.ssh/id_rsa PUB_ID_RSA_PATH=${HOME}/.ssh/id_rsa.pub TARGET_NS=sonataflow-infra ./install_m2k.sh
 ```
+
+You can set the helm chart version by setting the VERSION environment variable; defaults to latest. 
+```console
+VERSION="1.4.0"
+```
+
+In the case of self signed cluster ingress cert, the move2kube service url should be used. To do so, set the SELF_SIGNED variable to "true"; defaults to false. 
+```console
+SELF_SIGNED="true"
+```
+
 ## Manual installation
 ### Prerequisites 
 * Set `TARGET_NS` to the target namespace:
@@ -123,6 +134,11 @@ oc -n ${M2K_INSTANCE_NS} create secret generic sshkeys --from-file=id_rsa=${HOME
 Then force the pod to be recreated:
 ```console
 oc -n ${M2K_INSTANCE_NS} rollout restart deploy move2kube
+```
+
+In the case of self signed cluster ingress cert, the M2K_ROUTE should point to the move2kube service url. E.g http://move2kube-svc.move2kube.svc.cluster.local:8080 
+```console
+SELF_SIGNED="true"
 ```
 
 #### Set `M2K_ROUTE` and `BROKER_URL` for the Knative service
