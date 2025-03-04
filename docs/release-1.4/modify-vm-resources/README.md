@@ -14,7 +14,7 @@ The following table lists the configurable parameters of the Modify VM resources
 |                          |                         |                |
 
 # Workflow application configuration
-Please refer to [the workflow README](https://github.com/rhdhorchestrator/serverless-workflows/blob/main/workflows/modify-vm-resources/README.md#workflow-application-configuration)
+Please refer to [the workflow README](https://github.com/rhdhorchestrator/serverless-workflows/blob/v1.4.x/workflows/modify-vm-resources/README.md#workflow-application-configuration)
 
 
 # Pre-installation Configuration
