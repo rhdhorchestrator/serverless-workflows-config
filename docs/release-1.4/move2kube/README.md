@@ -7,7 +7,7 @@ Helm chart to deploy the move2kube workflow.
 
 
 ## Helm Configuration
-The list of the overridable values can be found in our [git repository](https://github.com/rhdhorchestrator/serverless-workflows-config/blob/main/charts/move2kube/values.yaml)
+The list of the overridable values can be found in our [git repository](https://github.com/rhdhorchestrator/serverless-workflows-config/blob/v1.4.x/charts/move2kube/values.yaml)
 
 The following table lists the configurable parameters of the Move2kube chart and their default values.
 
@@ -26,7 +26,7 @@ The following table lists the configurable parameters of the Move2kube chart and
 | `instance.image` | image of the move2kube instance | `"quay.io/orchestrator/move2kube-ui:latest"` |
 
 ## Workflow application configuration
-Please refer to [the workflow README](https://github.com/rhdhorchestrator/serverless-workflows/blob/main/workflows/move2kube/README.md#workflow-application-configuration)
+Please refer to [the workflow README](https://github.com/rhdhorchestrator/serverless-workflows/blob/v1.4.x/workflows/move2kube/README.md#workflow-application-configuration)
 
 ## Persistence pre-requisites
 If persistence is enabled, you must have a PostgreSQL instance running in the cluster, in the same `namespace` as the workflows.
@@ -37,7 +37,7 @@ See https://www.rhdhorchestrator.io/orchestrator-helm-operator/postgresql on how
 
 ## General pre-requisites
 
-Knative eventing communication must be enabled by setting the `eventing` spec in the SonataFlowPlatform by following https://github.com/rhdhorchestrator/orchestrator-helm-operator/tree/main/docs/main/eventing-communication.
+Knative eventing communication must be enabled by setting the `eventing` spec in the SonataFlowPlatform by following https://github.com/rhdhorchestrator/orchestrator-helm-operator/tree/main/docs/release-1.4/eventing-communication.
 
 > [!NOTE]
 > In this guide a Kafka cluster is installed along with the broker but you could also use a in-memory broker. However, bear in mind that in-memory brokers are not resilient.
@@ -83,7 +83,7 @@ If you do not have ssh keys, you can generate them with `ssh-keygen` command. Yo
 
 Note that those ssh keys need to be added to your git repository as well. For bitbucket, it should be on the [account level](https://bitbucket.org/account/settings/ssh-keys/)
 
-View the [Move2Kube README](https://github.com/rhdhorchestrator/serverless-workflows-config/blob/main/charts/move2kube/README.md) on GitHub.
+View the [Move2Kube README](https://github.com/rhdhorchestrator/serverless-workflows-config/blob/v1.4.x/charts/move2kube/README.md) on GitHub.
 
 
 #### For Knative
