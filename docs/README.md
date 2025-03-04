@@ -43,6 +43,14 @@ The workflows rely on components included in the [Orchestrator Operator](https:/
 The list below outlines the compatibility between the workflows and Orchestrator versions:
 | Workflows          | Chart Version | Orchestrator Operator Version |
 |--------------------|---------------|----------------------|
+| move2kube          | 1.4.x         | 1.4.x                |
+| create-ocp-project | 1.4.x         | 1.4.x                |
+| request-vm-cnv     | 1.4.x         | 1.4.x                |
+| modify-vm-resources| 1.4.x         | 1.4.x                |
+| mta-v7             | 1.4.x         | 1.4.x                |
+| mtv-migration      | 1.4.x         | 1.4.x                |
+| mtv-plan           | 1.4.x         | 1.4.x                |
+|--------------------|---------------|----------------------|
 | move2kube          | 1.3.x         | 1.3.x                |
 | create-ocp-project | 1.3.x         | 1.3.x                |
 | request-vm-cnv     | 1.3.x         | 1.3.x                |
