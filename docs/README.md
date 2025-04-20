@@ -11,7 +11,7 @@ The repository includes a variety of serverless workflows, such as:
 ## Usage
 
 ### Prerequisites
-To utilize the workflows contained in this repository, the Orchestrator Deployment must be installed on your OpenShift Container Platform (OCP) cluster. For detailed instructions on installing the Orchestrator, please visit the [Orchestrator Helm Based Operator Repository](https://www.rhdhorchestrator.io/orchestrator-helm-operator/)
+To utilize the workflows contained in this repository, the Orchestrator Deployment must be installed on your OpenShift Container Platform (OCP) cluster. For detailed instructions on installing the Orchestrator, please visit the [Orchestrator Helm Based Operator Repository](https://www.rhdhorchestrator.io/orchestrator-go-operator/)
 
 ## Installation
 ```bash
@@ -36,12 +36,20 @@ orchestrator-workflows/workflows	0.2.24       	1.16.0     	A Helm chart for serv
 You can [install the workflows following their respective README](https://github.com/rhdhorchestrator/serverless-workflows-config/blob/main/docs/main/)
 
 ## Installing workflows in additional namespaces
-When deploying a workflow in a namespace different from where Sonataflow services are running (e.g. sonataflow-infra), there are essential steps to follow. For detailed instructions, see the [Additional Workflow Namespaces section](https://github.com/rhdhorchestrator/orchestrator-helm-operator/tree/main/docs/release-1.2?tab=readme-ov-file#additional-workflow-namespaces).
+When deploying a workflow in a namespace different from where Sonataflow services are running (e.g. sonataflow-infra), there are essential steps to follow. For detailed instructions, see the [Additional Workflow Namespaces section](https://github.com/rhdhorchestrator/orchestrator-go-operator/tree/main/docs/release-1.5?tab=readme-ov-file#additional-workflow-namespaces).
 
 ## Version Compatability
 The workflows rely on components included in the [Orchestrator Operator](https://www.rhdhorchestrator.io/orchestrator-helm-operator/). Therefore, it is crucial to match the workflow version with the corresponding Orchestrator version that supports it. 
 The list below outlines the compatibility between the workflows and Orchestrator versions:
 | Workflows          | Chart Version | Orchestrator Operator Version |
+|--------------------|---------------|----------------------|
+| move2kube          | 1.5.x         | 1.5.x                |
+| create-ocp-project | 1.5.x         | 1.5.x                |
+| request-vm-cnv     | 1.5.x         | 1.5.x                |
+| modify-vm-resources| 1.5.x         | 1.5.x                |
+| mta-v7             | 1.5.x         | 1.5.x                |
+| mtv-migration      | 1.5.x         | 1.5.x                |
+| mtv-plan           | 1.5.x         | 1.5.x                |
 |--------------------|---------------|----------------------|
 | move2kube          | 1.4.x         | 1.4.x                |
 | create-ocp-project | 1.4.x         | 1.4.x                |
