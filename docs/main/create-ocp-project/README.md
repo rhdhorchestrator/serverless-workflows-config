@@ -30,8 +30,9 @@ A Secret containing the PostgreSQL credentials must exist as well. See https://w
 From the `charts` folder in this repository run:
 
 ```bash
+helm repo add orchestrator-workflows https://rhdhorchestrator.io/serverless-workflows-config
 export TARGET_NS=sonataflow-infra
-helm install create-ocp-project ./create-ocp-project/ --namespace=$TARGET_NS 
+helm install create-ocp-project orchestrator-workflows/create-ocp-project --namespace=$TARGET_NS
 ```
 After the workflow is installed, you must configure environment variables for it to function.
 
