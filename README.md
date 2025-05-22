@@ -1,3 +1,7 @@
+> **🚨 Deprecation Notice: 🚨**  
+> From Orchestrator release version 1.7, Workflow Types will be retired. All workflows will act as infrastructure workflows, and no workflow will act as an assesment workflow. <br>
+> Any reference to assessment workflows will be obsolete.
+
 # serverless-workflows-config
 
 This repository is designed to offer a method for installing workflows through Helm charts.
