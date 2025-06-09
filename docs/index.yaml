@@ -544,6 +544,17 @@ entries:
     version: 1.6.0-rc0
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2025-06-09T12:36:33.731340988Z"
+    description: A Helm chart for the greeting serverless workflow
+    digest: 46eb52498d32f9998a63b555184c432680cfefad7e2f3a86d1b899f25c474d91
+    icon: https://raw.githubusercontent.com/rhdhorchestrator/rhdhorchestrator.github.io/main/assets/images/WO_black.svg
+    name: greeting
+    type: application
+    urls:
+    - https://github.com/rhdhorchestrator/serverless-workflows-config/releases/download/greeting-1.6.0-rc0/greeting-1.6.0-rc0.tgz
+    version: 1.6.0-rc0
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2025-04-18T08:38:47.413728161Z"
     description: A Helm chart for the greeting serverless workflow
     digest: 3735f40f2967f3556fe33477bfc1dbc48f4045fc1d4ddb33d3f50d9e0842baa9
@@ -5112,4 +5123,4 @@ entries:
     urls:
     - https://github.com/rgolangh/serverless-workflows-config/releases/download/workflows-0.1.0/workflows-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-22T07:52:49.810745642Z"
+generated: "2025-06-09T12:36:33.732638516Z"
