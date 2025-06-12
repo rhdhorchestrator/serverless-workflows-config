@@ -1,6 +1,11 @@
-> **🚨 Deprecation Notice: 🚨**  
-> From Orchestrator release version 1.7, Workflow Types will be retired. All workflows will act as infrastructure workflows, and no workflow will act as an assesment workflow. <br>
-> Any reference to assessment workflows will be obsolete.
+# ⚠️ Repository Archived – No Longer Maintained
+
+This repository (serverless-workflows-config) is no longer maintained.
+All development and maintenance efforts have been consolidated into the main repository:
+
+👉 https://github.com/rhdhorchestrator/serverless-workflows
+
+Please submit issues, feature requests, and contributions to the main repository above.
 
 # serverless-workflows-config
 
@@ -54,3 +59,7 @@ frigate gen <path to the chart folder> README.md
 ```
 
 To bump a new chart version, use `./hack/bump_version.sh`
+
+> **🚨 Deprecation Notice: 🚨**  
+> From Orchestrator release version 1.7, Workflow Types will be retired. All workflows will act as infrastructure workflows, and no workflow will act as an assesment workflow. <br>
+> Any reference to assessment workflows will be obsolete.
